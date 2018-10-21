@@ -1,0 +1,110 @@
+RudeSession NEWS - User visible changes.
+See ChangeLog for more detailed information on internal changes
+See the end for copying conditions.
+
+__________________________________________________________________________________
+Version 3.2.2-1
+- Created MAN page
+- Minor build script modifications
+
+__________________________________________________________________________________
+Version 3.2.1-1
+- Added support for MySQL Storage of data
+
+	Example:
+	///////////////////////////////////////
+	// Set up database context...
+	//
+	Database::addContext( "mycontextname", "mydatabase", "myusername", "mypassword", "serveraddress", 3306);
+
+	// Set up session to use database
+	//
+	Session::setPersistanceMethod("database");
+	Session::setDatabaseContext("mycontextname");
+
+	// Use session as normal...
+	//
+	Session *session = session::getSession();
+	//////////////////////////////////////////
+
+
+	
+	Database tables:
+	
+	CREATE TABLE IF NOT EXISTS `Sessions` (
+  		`SessionID` char(50) NOT NULL,
+  		`OriginalIP` char(15) NOT NULL default '',
+  		`LastIP` char(15) NOT NULL default '',
+  		`TimeCreated` datetime NOT NULL default '0000-00-00 00:00:00',
+  		`TimeLastAccessed` datetime NOT NULL default '0000-00-00 00:00:00',
+  		`MaxInactiveInterval` int(11) NOT NULL default '0',
+  		`MaxSessionLength` int(11) NOT NULL default '0',
+  		`NumTimesActive` int(10) unsigned NOT NULL default '0',
+  		`IPMask` int(10) unsigned NOT NULL default '0',
+  		PRIMARY KEY  (`SessionID`),
+  		KEY `TimeCreated` (`TimeCreated`),
+  		KEY `TimeLastAccessed` (`TimeLastAccessed`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 |
+
+
+
+	CREATE TABLE IF NOT EXISTS `SessionData` (
+  		`SessionID` char(50) NOT NULL,
+  		`DataName` varchar(255) NOT NULL default '',
+  		`DataValue` mediumtext NOT NULL,
+  		`ListOrder` int(11) NOT NULL default '0',
+  		KEY `SessionID` (`SessionID`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 
+
+	
+__________________________________________________________________________________
+Version 3.1.1-1
+- Changed entropy file from /dev/random to /dev/urandom
+	because /dev/random was blocking on our new machine - no entropy was available!!!
+	/dev/urandom does not block
+__________________________________________________________________________________
+Version 3.0.1-1
+
+	** Detecting command line interactions and prompting user to create simple ID
+	** Added debug features
+
+	** Changed package versioning: 
+		now using the LIBRARY_VERSION-RELEASE_VERSION
+		Release version will be set to 1 for each new lib version
+		
+	** Rolled the package into binary and source RPMs
+__________________________________________________________________________________
+Version 2.1
+
+	** Fixed a bug that allowed illegal characters to appear in session ID.
+
+__________________________________________________________________________________
+Version 2.0
+
+	** RudeSession became open source and is distributed under the GNU Public License.
+		Commercial licenses are available for a fee, and allow the holder
+		to use the library in commercial applications. Contact info@rudeserver.com
+		for more details.
+
+__________________________________________________________________________________
+
+Copyright (C) 2005 Matthew Flood
+See file AUTHORS for contact information
+
+This file is part of RudeSession.
+
+RudeSession is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+RudeSession is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with RudeSession; see the file COPYING.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+

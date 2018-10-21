@@ -1,0 +1,410 @@
+.\" Process this file with 
+.\" groff -man -Tascii rudesession.3
+.\"
+.TH rudesession 3  "May 30, 2007" "Version 3.2" "User Manuals"
+.SH NAME
+rudesession \- maintain session state in C++ CGI applications
+.SH SYNOPSIS
+.nf
+
+	#include <rude/session.h>
+
+	rude::Session::setSessionDirectory("/tmp/sessions");
+
+	rude::Session *mysession = rude::Session::getSession();
+
+	mysession->setStringValue("color", "red");
+
+	mysession->save();"
+
+	const char *color=mysession->getStringValue("color");
+
+.fi
+
+.SH DESCRIPTION
+
+The rudesession library is used to maintain session state for CGI applications.
+
+.SH API
+
+.PP
+.B Static Methods to Configure the Session Object Before Use
+
+.nf
+
+.BI	"static const char *getCookieIdentifier();"
+
+		Returns the Name of the cookie that is set
+
+.BI	"static const char *getDatabaseContext();"
+
+		Returns the name of the database context that represents the session database
+
+.BI	"static bool getDebugMode();"
+
+		Returns true if debug mode is turned on
+
+.BI	"static const char * getDomain();"
+
+		Returns the domain used in the cookie
+
+.BI	"static const char * getPath();"
+
+		Returns the path used in the cookie
+
+.BI	"static const char * getPersistanceMethod();"
+
+		Returns the persistance method.
+		Currently can be either "database" or "config"
+
+.BI	"static const char * getSessionDirectory();"
+
+		Returns the directory used to store the sessions
+
+.BI	"static void setCookieIdentifier(const char * " "cookiename" ");"
+
+		Sets the Name of the cookie that is set
+
+.BI	"static void setDatabaseContext(const char * " "contextname" ");"
+
+		Sets the database context name that represents the session database
+
+.BI	"static void setDebugMode(bool " "on_or_off" ");"
+
+		Enables or disables debug mode
+
+.BI	"static void setDomain(const char * " "cookie_domain" ");"
+
+		Sets the domain used in the cookie
+
+.BI	"static void setPath(const char * " "cookie_path" ");"
+
+		Sets the path used in the cookie
+
+.BI	"static void setPersistanceMethod(const char * " "config_or_database" ");"
+
+	Sets the persistance method. 
+	Currently can be either "database" or "config"
+	Defaults to "config"
+
+.BI	"static void setSessionDirectory(const char * " "directory_path" ");"
+
+	Sets the directory used to store the sessions.
+	The directory should be read/writable by your web server
+
+.fi
+
+
+.PP	
+.B Constructor/Destructor
+
+.nf
+.BI	"static rude::Session * rude::Session::getSession();"
+
+	Returns the session object. 
+	This acts as the constructor and is the only 
+	way to access the session. (Singleton design pattern)
+
+.BI	"~Session();"
+
+	Destructor
+
+.fi
+
+.PP	
+.B Instance Methods
+
+.nf
+.BI	"bool save();"
+
+	Saves the session object.
+
+.BI	"bool isNew();"
+
+	Returns true if the session object is new.
+
+.BI	"bool getSessionID();"
+
+	Returns the Session ID associated with the current user.
+		
+.fi
+
+.PP	
+.B Methods to Access/Manipulate Session Data
+
+.nf
+.BI	"void	addValue(const char *" "name" ", const char *" "value" ") "
+
+	Adds a value to the end of the data list identified by "name"
+	Currently only database persistance allows multiple values for a given name
+
+.BI	"void clear();"
+
+	Removes all data from the session
+
+.BI	"void	deleteValue(const char *" "name" ") "
+
+	Deletes a value or list of values identified by "name"
+
+.BI	"bool	exists(const char *" "name" ") "
+
+	Returns true if a data item identified by "name" exists
+
+.BI	"const char * getNameAt(int " "index" ") "
+
+	Returns the name of the data item at the specified "index", starting from 0
+
+.BI	"char * getBinaryValue(const char *" "name" ", int &" "outlength" ")"
+
+	Returns binary data associated with "name", 
+	ands sets the length of the data in "outlength"
+
+.BI	"bool getBoolValue(const char *" "name" ")"
+
+	Returns the boolean value associated with "name"
+
+.BI	"double getDoubleValue(const char* " "name" ")"
+
+	Converts the value associated with "name" to a double value
+
+.BI	"int getIntValue(const char *" "name" ")"
+
+	Converts the value associated with "name" to an int value
+
+.BI	"int getNumValues()"
+
+	Returns the number of data items stored in the session
+
+.BI	"int getNumValues(const char *" "name" ")"
+
+	Returns the number of values associated with the data element identified by name
+	Currently only database persistance allows multiple values for a given name
+
+.BI	"const char * getStringValue(const char *" "name" ")"
+
+	Returns the string value associated with "name". 
+
+.BI	"const char * getValue( const char *" "name" ")"
+
+	Returns the string value associated with "name". 
+
+.BI	"const char * getValue(const char *" "name" ", int " "index" ")"
+
+	Returns the string value associated with "name" at the specified "index".
+	Currently only database persistance allows multiple values for a given name
+
+.BI	"const char * getValueAt(int " "index" ")"
+
+	Returns the string value of the data item specified by "index".
+	If there are more than one value associated with the data item, 
+	the first value in the list is returned.
+
+.BI	"const char* removeValue(const char *" "name" ", int " "index" ")"
+
+	Removes the nth value associated with "name", and returns the value that was removed.
+	Currently only database persistance allows multiple values for a given name
+
+.BI	"void setBinaryValue(const char *" "name" ", const char *" "value" ", int " "datalength" ")"
+
+	Stores a binary value
+
+.BI	"void setBoolValue(const char *" "name" ", bool " "value" ")"
+
+	Sets the value of "name" to the boolean "value"
+
+.BI	"void setDoubleValue(const char *" "name" ", double " "value" ")"
+
+	Sets the value of "name" to the double "value"
+
+.BI	"void setIntValue(const char *" "name" ", int " "value" ")"
+
+	Sets the value of "name" to the int "value"
+
+.BI	"void setStringValue(const char *" "name" ", const char *" "value" ")"
+
+	Sets the value of "name" to "value"
+
+.BI	"void setValue(const char *" "name" ", const char *" "value" ")"
+
+	Sets the value of "name" to "value"
+.fi
+
+
+.SH DATABASE TABLE SETUP
+
+In order to use the database persistance method, you will need to set up the database tables. Here are the create table definitions:
+
+.nf
+.B CREATE TABLE `Sessions` (
+.B `SessionID` char(50) NOT NULL,
+.B `OriginalIP` char(15) NOT NULL default '',
+.B `LastIP` char(15) NOT NULL default '',
+.B `TimeCreated` datetime NOT NULL default '0000-00-00 00:00:00',
+.B `TimeLastAccessed` datetime NOT NULL default '0000-00-00 00:00:00',
+.B `MaxInactiveInterval` int(11) NOT NULL default '0',
+.B `MaxSessionLength` int(11) NOT NULL default '0',
+.B `NumTimesActive` int(10) unsigned NOT NULL default '0',
+.B `IPMask` int(10) unsigned NOT NULL default '0',
+.B `SiteCode` char(30) NOT NULL default '',
+.B PRIMARY KEY (`SessionID`),
+.B KEY `TimeCreated` (`TimeCreated`),
+.B KEY `TimeLastAccessed` (`TimeLastAccessed`),
+.B KEY `SiteName` (`SiteCode`)
+.B );
+
+.B CREATE TABLE `SessionData` (
+.B `SessionID` char(50) NOT NULL,
+.B `DataName` varchar(255) NOT NULL default '',
+.B `DataValue` mediumtext NOT NULL,
+.B `ListOrder` int(11) NOT NULL default '0',
+.B KEY `SessionID` (`SessionID`)
+.B );
+.fi
+
+
+.SH EXAMPLES
+
+Examples, how-to's and tutorials can also be found at the rudeserver.com website
+
+.B Basic Usage
+
+.nf
+#include <rude/session.h>
+
+using namespace rude;
+
+int main(void)
+{
+
+	// Set Up Config Persistance
+	//
+	Session::setPersistanceMethod("config");
+	Session::setSessionDirectory("/tmp/sessions");
+
+	// Configure cookie information
+	//
+	Session::setPath("/");
+	Session::setDomain(".example.com");
+	Session::setCookieIdentifer("SESSIONID");
+
+	//////////
+	// Once the Session has been configured (as above), 
+	// the following code can appear anywhere 
+	// in your application
+	//////////
+	
+	// You need to obtain the session instance *before*  
+	// you output anything, because new sessions need to 
+	// send an HTTP cookie header
+	//
+	Session *session = Session::getSession();
+
+	// Use the session to store info
+	//
+	session->addValue("color", "red");
+
+	// Save the changes
+	//
+	session->save();
+
+	// Use the session to retrieve info
+	//
+	const char *color=session->getValue("color");
+
+	// Clean up everything.  This should only happen
+	// at the end of your program.
+	//
+	delete session;
+
+}
+
+.fi
+
+.B Using Database Persistance
+
+.nf
+#include <rude/session.h>
+#include <rude/database.h>
+
+using namespace rude;
+
+int main(void)
+{
+
+	// We are going to use the following database connection, 
+	// and we will identify it by "my_session_context", 
+	// "which is arbitrarily determined
+	//
+	const char *contextname="my_session_context";
+	const char *database="test";
+	const char *username="some_mysql_user";
+	const char *password="some_password";
+	const char *server="localhost";
+	int port=3306;
+
+	// Create the database context
+	//
+	Database::addContext(contextname,database, username, password, server, port);
+	 
+	// Now set up the session object to use the database context we have created
+	//
+	Session::setPersistanceMethod("database");
+	Session::setDatabaseContext(contextname);
+
+	// Configure cookie information
+	//
+	Session::setPath("/");
+	Session::setDomain(".example.com");
+	Session::setCookieIdentifer("SESSIONID");
+
+	//////////
+	// Once the Session has been configured (as above), 
+	// the following code can appear anywhere 
+	// in your application
+	//////////
+	
+	// You need to obtain the session instance *before*  
+	// you output anything, because new sessions need to 
+	// send an HTTP cookie header
+	//
+	Session *session = Session::getSession();
+
+	// Use the session to store info
+	//
+	session->addValue("color", "red");
+
+	// Save the changes
+	//
+	session->save();
+
+	// Use the session to retrieve info
+	//
+	const char *color=session->getValue("color");
+
+	// Clean up everything.  This should only happen
+	// at the end of your program.
+	//
+	delete session;
+
+}
+
+.fi
+
+.SH SEE ALSO
+.BR rudecgiparser(3),
+.BR rudedatabase(3),
+.BR rudeconfig(3)
+
+.SH REPORTING PROBLEMS
+
+Before reporting a problem, please check the rudeserver.com web site to verify that you have the latest version of rudesession; otherwise, obtain the latest version and see if the problem still exists.  Please read the  FAQ at:
+
+              http://www.rudeserver.com/
+
+before asking for help.  Send questions and/or comments to  matt@rudeserver.com
+
+.SH AUTHORS
+Copyright (C) 2000 Matthew Flood (matt@rudeserver.com)
+
+This  software is provided "as-is," without any express or implied warranty.  In no event will the authors be held liable for any damages arising from the use of this software.  See the distribution directory with respect  to  requirements  governing  redistribution. Thanks to all the people who reported problems and suggested various improvements in rudesession; who are too numerous to cite here.
+
